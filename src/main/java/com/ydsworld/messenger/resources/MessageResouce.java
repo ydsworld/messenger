@@ -1,6 +1,7 @@
 package com.ydsworld.messenger.resources;
 
 import java.awt.PageAttributes.MediaType;
+import java.net.URI;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -11,6 +12,9 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import com.ydsworld.messenger.model.*;
 
@@ -57,7 +61,13 @@ public class MessageResouce {
 	@POST
 	@Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
 	@Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
-	public Message addMessage(Message message){
-		return service.addMessage(message);
+	public Response addMessage(Message message, @Context UriInfo uriInfo){
+		Message newMsg = service.addMessage(message);
+		String newID = String.valueOf(newMsg.getId());
+		//return new URI 
+		URI uri = uriInfo.getAbsolutePathBuilder().path(newID).build();
+		
+		return Response.created(uri).entity(newMsg).build();
+		//return service.addMessage(message);
 	}
 }//class
